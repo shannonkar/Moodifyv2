@@ -1,0 +1,25 @@
+{
+  "name": "Moodifyv2",
+  "version": "1.0.0",
+  "description": "A Cleaner version of Moodify",
+  "scripts": {
+    "dev": "concurrently \"cd server && npm run start\" \"cd client && npm run start\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shannonkar/Moodifyv2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shannonkar/Moodifyv2/issues"
+  },
+  "homepage": "https://github.com/shannonkar/Moodifyv2#readme",
+  "devDependencies": {
+    "concurrently": "^5.3.0"
+  },
+  "dependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
