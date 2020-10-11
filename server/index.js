@@ -6,13 +6,17 @@ const querystring = require('querystring')
 const isLoggedIn=require('./auth')
 const axios =require('axios');
 const fetch = require('node-fetch');
-const PORT = 8081
+const bodyParser = require('body-parser')
+const PORT = 8081;
+const async = require('express-async-await')
 const redirect_uri='http://localhost:8081/callback'
 const spotify_auth_uri = 'https://accounts.spotify.com/authorize?';
 
 app.use(cors())
-    .use(express.json())
-    .use(express.urlencoded({extended:false}))
+    // parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+// parse application/json
+app.use(bodyParser.json())
 
 app.get('/', (request, response)=>
     response.send('Hello')
@@ -25,28 +29,45 @@ app.get('/login',(request,response)=>{
             response_type: 'code',
             redirect_uri: redirect_uri,
             scope:scope,
+            show_dialog: true
         }))
-
-
-
 });
-app.get('/callback', (request, response)=>{
-    getAuth(request.query.code).then(response => console.log(response)).catch(err => console.log(err.message))
-})
- function getAuth(auth_code) {
-   return fetch('https://accounts.spotify.com/api/token', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Basic' + new Buffer.from(process.env.CLIENT_ID + ':' + process.env.CLIENT_SECRET).toString('base64'),
-        },
-        body:{
-            "grant_type": "authorization_code",
-            "code": auth_code,
-            "redirect_uri": redirect_uri,
-        }
-    })
+
+async function getAUth() {
+
+
+
 }
 
+
+
+app.get('/callback', async(request, response)=>{
+    //getAuth(request.query.code).then(response => console.log(response)).catch(err => console.log(err.message))
+    //response.end('end')
+
+    const auth_code = request.query.code;
+    //response.send(auth_code)
+    const data = querystring.stringify({
+            'grant_type': "authorization_code",
+            'code': auth_code,
+            'redirect_uri': redirect_uri,
+    })
+
+    try{
+      const res =  await axios.post('https://accounts.spotify.com/api/token', {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Basic ' + (new Buffer.from(process.env.CLIENT_ID + ':' + process.env.CLIENT_SECRET).toString('base64'))
+            },
+           data: data
+        })
+        const result = await res.data;
+        return result;
+    }
+   catch (e){
+       console.log(e.message)
+   }
+   })
+   // response.redirect('/')
 
 app.listen(PORT, ()=>console.log(`listening on ${PORT}`));

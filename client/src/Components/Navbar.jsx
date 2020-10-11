@@ -1,10 +1,10 @@
 import React from 'react'
 
-function Navbar() {
+function Navbar(props) {
     return (
         <nav className='nav'>
-            <button>Login</button>
-            <button>Logout</button>
+            <button onClick={props.handleLogin}>Login</button>
+            <button onClick={props.handleLogout}>Logout</button>
         </nav>
 
     )
